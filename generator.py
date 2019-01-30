@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import copy
 import os
@@ -11,11 +12,11 @@ class BibGenerator(object):
 
     author_default_fields = {
         u"author_index": 0,
-        u"author_name": u"Jozef Bednarcik",
+        u"author_name": u"",
         u"author_credentials": u"x",
         u"author_percentage": 0,
         u"author_doctorand": u"nie",
-        u"author_affiliation": u"",
+        u"author_affiliation": u"Iné pracovisko - nie z UPJŠ - x",
         u"author_contact": u"",
     }
 
@@ -46,9 +47,9 @@ class BibGenerator(object):
     def generate(self):
         entries = self.data.entries
         with open(self.form_template, "r") as fo:
-            form_template = "".join(fo.readlines())
+            form_template = u"".join([line.decode('utf-8').strip() for line in fo.readlines()])
         with open(self.author_template, "r") as fo:
-            author_template = "".join(fo.readlines())
+            author_template = u"".join([line.decode('utf-8').strip() for line in fo.readlines()])
 
         for isi_id, entry in entries.items():
             if entry.type == u"article":
@@ -58,6 +59,9 @@ class BibGenerator(object):
                 authors = entry.persons['author']
                 authors_list = []
                 percentage = entry.fields["sk_podiely"].split("; ")
+                if "pages" not in entry.fields:
+                    print(current_form_fields["unique-id"])
+                    current_form_fields["pages"] = "{}-x".format(entry.fields["volume"])
                 for index, author in enumerate(authors):
                     current_autor_fileds = copy.copy(self.author_default_fields)
                     meno = " ".join(map(str, author.first_names + author.middle_names))
@@ -65,6 +69,8 @@ class BibGenerator(object):
                     current_autor_fileds["author_name"] = "{} {}".format(meno, priezvisko)
                     current_autor_fileds["author_index"] = index + 1
                     current_autor_fileds["author_percentage"] = percentage[index]
+                    if priezvisko == "Bednarcik":
+                        current_autor_fileds["author_affiliation"] = u"Prírodovedecká fakulta - UFV"
                     authors_list.append(author_template.format(**current_autor_fileds))
 
                 current_form_fields["authors"] = "\n".join(authors_list)
@@ -72,4 +78,4 @@ class BibGenerator(object):
                 output_filename = "{}_{}.html".format(current_form_fields["year"],
                                                       current_form_fields["unique-id"].replace(":", "_"))
                 with open(os.path.join("./output", output_filename), "w+") as fo:
-                    fo.writelines(output_html_source)
+                    fo.writelines(output_html_source.encode("utf-8"))
