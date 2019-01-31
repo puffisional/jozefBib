@@ -34,9 +34,9 @@ class BibGenerator(object):
             u"pages": u"",
             u"doi": u"",
         }
-        self.data = self._load_databsae()
+        self.data = self._load_database()
 
-    def _load_databsae(self):
+    def _load_database(self):
         parser = bibtex.Parser()
         bib = parser.parse_file(self.database)
         data = bib.lower()
@@ -71,16 +71,16 @@ class BibGenerator(object):
                 # Loop thru all article authors
                 for index, author in enumerate(authors):
                     # Copy default fields
-                    current_author_fileds = copy.copy(self.author_default_fields)
+                    current_author_fields = copy.copy(self.author_default_fields)
                     name = u" ".join(map(str, author.first_names + author.middle_names))
                     surname = u"".join(map(str, author.last_names))
-                    current_author_fileds["author_name"] = u"{} {}".format(name, surname)
-                    current_author_fileds["author_index"] = index + 1
-                    current_author_fileds["author_percentage"] = percentage[index]
+                    current_author_fields["author_name"] = u"{} {}".format(name, surname)
+                    current_author_fields["author_index"] = index + 1
+                    current_author_fields["author_percentage"] = percentage[index]
                     if surname == u"Bednarcik":
-                        current_author_fileds["author_affiliation"] = u"Prírodovedecká fakulta - UFV"
+                        current_author_fields["author_affiliation"] = u"Prírodovedecká fakulta - UFV"
                     # Append author to the list
-                    authors_list.append(author_template.format(**current_author_fileds))
+                    authors_list.append(author_template.format(**current_author_fields))
                 # Join all the authors into one string
                 current_form_fields["authors"] = u"\n".join(authors_list)
                 # Fill form template with fields
