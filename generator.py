@@ -6,8 +6,10 @@ from pybtex.database.input import bibtex
 
 
 class BibGenerator(object):
-    form_template = u"./resources/form_template.tpl"
-    author_template = u"./resources/author_template.tpl"
+    # Form template file path
+    form_template = os.path.join(u".", u"resources", u"form_template.tpl")
+    # Author template file path
+    author_template = os.path.join(u".", u"resources", u"author_template.tpl")
 
     def __init__(self, database):
         self.database = database
@@ -31,7 +33,6 @@ class BibGenerator(object):
             u"issn": u"",
             u"pages": u"",
             u"doi": u"",
-            u"year": u"",
         }
         self.data = self._load_databsae()
 
@@ -87,10 +88,11 @@ class BibGenerator(object):
                 # Create output filename
                 output_filename = u"{}_{}.html".format(current_form_fields["year"],
                                                        current_form_fields["unique-id"].replace(u":", u"_"))
-                output_filename = os.path.join(".", "output", output_filename)
-                generated_files.append(output_filename)
+                # Create output file path
+                output_file_path = os.path.join(".", "output", output_filename)
+                generated_files.append(output_file_path)
                 # Create output file (overwrite if exists)
-                with open(output_filename, "w+") as fo:
+                with open(output_file_path, "w+") as fo:
                     fo.writelines(output_html_source.encode("utf-8"))
 
         return generated_files
