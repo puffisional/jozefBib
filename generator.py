@@ -64,7 +64,7 @@ class BibGenerator(object):
                 percentage = entry.fields["sk_podiely"].split("; ")
                 # Check range of pages
                 if "pages" not in entry.fields:
-                    current_form_fields["pages"] = u"{}-x".format(entry.fields["volume"])
+                    current_form_fields["pages"] = u"{}-x".format(entry.fields.get("article-number", u"x"))
                 # List of article authors
                 authors_list = []
                 authors = entry.persons['author']
